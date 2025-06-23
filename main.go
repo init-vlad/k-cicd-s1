@@ -15,7 +15,7 @@ func main() {
 
 	serv := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Service 1 alive"))
+		w.Write([]byte("Service 1 alive: ci cd edition:))"))
 	})
 
 	http.ListenAndServe(":8080", serv)
