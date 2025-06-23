@@ -1,0 +1,30 @@
+name: CI/CD for s1
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build Go app
+        run: go build -o app main.go
+
+      - name: Build Docker image
+        run: docker build -t test-s1:latest .
+
+      - name: Save and import image to k3s
+        run: |
+          docker save test-s1:latest -o test-s1.tar
+          sudo k3s ctr images import test-s1.tar
+          rm test-s1.tar
+
+      - name: Deploy to k3s (apply manifests from local-k8s repo)
+        run: |
+          if [ ! -d local-k8s ]; then git clone https://github.com/init-vlad/k-cicd-s1.git; else cd local-k8s && git pull && cd ..; fi
+          kubectl apply -k local-k8s
+          kubectl rollout restart deployment test-s1-deploy -n env-prod
