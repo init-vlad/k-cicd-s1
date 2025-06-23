@@ -1,0 +1,4 @@
+resources:
+  - ./resources/s1-deployment.yaml
+  - ./resources/s1-service.yaml
+  - ./resources/s1-ingress.yaml

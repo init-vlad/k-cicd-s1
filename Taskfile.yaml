@@ -1,0 +1,16 @@
+version: '3'
+
+vars:
+  SERVICE: test-s1
+
+tasks:
+  k8sdep:
+    cmds:
+      - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app main.go
+      - docker build -t {{.SERVICE}}:latest .
+      - rm app
+      - docker save {{.SERVICE}}:latest -o {{.SERVICE}}.tar
+      - sudo k3s ctr images import {{.SERVICE}}.tar
+      - sudo rm {{.SERVICE}}.tar
+      - sudo k3s kubectl apply -k ./k8s/
+      - sudo k3s kubectl rollout restart deployment {{.SERVICE}}-deploy

@@ -1,0 +1,19 @@
+# k8s/ping-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-s1-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: ping.lc
+      http:
+        paths:
+          - path: /s1
+            pathType: Prefix
+            backend:
+              service:
+                name: test-s1-service
+                port:
+                  number: 80
